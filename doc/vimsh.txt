@@ -1,0 +1,143 @@
+vimsh version 1.0
+Page 1 of 3
+
+
+
+vimsh and vimsh.bat
+
+ vimsh and vimsh.bat are simple Vim script shell command line interpreters
+ for  UNIX and MSDOS respectively.  You type Vim script code into a .vimsh
+ file  then, using the appropriate interpreter, execute the file from  the
+ command line.   The interpreter takes this code and encapsulates it  into
+ a  Vim  script function and calls the function, capturing any output  and
+ echo-ing it to the shell command line.
+ 
+
+
+The .vimsh file
+
+ The  structure  of  a  .vimsh  file is  simple  and  analogous  to  other
+ interpreted  script files in UNIX.  It consists of a single  header  line
+ identifying  the  file  as  an  executable script  with  ‘vimsh’  as  the
+ interpreter  (this is not needed with MSDOS, however, the line  is  still
+ included  for  uniformity  across platforms  and  the  MSDOS  interpreter
+ expects it as does the UNIX interpreter).  As an example:
+ 
+      #!/usr/local/bin/vimsh
+      let nr=1
+      echo ‘Counting to 10…’
+      echo ‘’
+      while nr <= 10
+        echon nr.’ ‘
+        let nr=nr+1
+      endwhile
+      echo ‘Done’
+ 
+ In  UNIX the shell looks at the first line for the name of an interpreter
+ in script files.  It hands off the file to that interpreter, in this case
+ ‘vimsh’  (in MSDOS, the mechanism is quite different, but the outcome  is
+ the  same,  more  about  that later).  The interpreter  then  parses  the
+ script,  executes the code, and displays the results.   This  is  exactly
+ what happens with vimsh.
+ Here, the output would be:
+ 
+      Counting to 10…
+      1 2 3 4 5 6 7 8 9 10
+      Done
+
+
+
+
+
+Unix Setup
+ 
+ Setup  in  UNIX  is  quite easy.  Simply place the sh  version  of  vimsh
+ (vimsh)  in  a directory in your $PATH.  Now, any .vimsh file  the  shell
+ recognizes as an executable script (i.e., it resides somewhere in  $PATH,
+ has  its  mode set to executable, and has vimsh designated as the command
+ line  interpreter  in  its  first line) will have  its  Vim  script  code
+ interpreted, executed, and the results displayed.
+ 
+
+ 
+MSDOS Setup
+
+ Setup  for  MSDOS  is a little more involved.  Besides  placing  the  bat
+ version of vimsh (vimsh.bat) in a directory in your %PATH, you must  also
+ tell  MSDOS  what sort of files vimsh is associated with.  Unfortunately,
+ Microsoft  is  not completely clear on how this is done  on  all  Windows
+ platforms,  but  this  method seems to work okay.  First  use  the  ASSOC
+ command to associate the .vimsh file extension with a ‘file type’:
+ 
+      ASSOC .vimsh=VimShellScript
+ 
+ Then  use  the FTYPE command to associate the ‘file type’ with a  command
+ for cmd.exe to execute:
+ 
+      FTYPE VimShellScript=C:\<your-location>\vimsh.bat “%1”
+ 
+ Now  any  file  located  in  %PATH that has a .vimsh  extension  will  be
+ identified as a VimShellScript and associated with the command ‘C:\<your-
+ location>\vimsh.bat “%1”’.  Here ‘<your-location>’ is wherever you  chose
+ to  place  vimsh.bat.  Now for 2 comments about spaces  in  pathnames  in
+ Microsoft  file  systems.   1)  WATCH THEM.   2)  WATCH  THEM  CAREFULLY.
+ Although  Microsoft  says they support spaces in pathnames  (and  by  and
+ large, they do) there are ‘holes’ where they slip through.  Mostly, these
+ holes   deal   with   arguments.   So,  firstly,   for   <your-location>,
+ theoretically a path (say ‘C:\Documents and Settings\Dave’)  with  spaces
+ is allowed, however, you’re better off (because of exceptions) to not use
+ a  path with spaces.  Secondly, the double quotes around %1 are there for
+ exactly that reason; to protect any paths that have spaces.  Don’t  leave
+ them out.
+ You  can  also eliminate the need for typing the extension (however,  not
+ the  actual  need  for  the extension in the file’s  name)  by  modifying
+ %PATHEXT.  You can do this in the autoexec, if your system uses  one,  or
+ if  autoexec  is  not  used,  in the Control Panel  ‘System’  menu  under
+ ‘Advanced’  and ‘Environment Variables’.  Either edit the  Control  Panel
+ entry, or append ‘.vimsh’ to PATHEXT in the autoexec:
+ 
+      SET PATHEXT=%PATHEXT%;.vimsh
+
+
+
+Script Execution
+ 
+ Script execution is accomplished the same as any other executable script,
+ that  is,  by  invoking  the script name.  For example,  in  the  example
+ scripts  in  this  package there is a script named  ‘vimtest.vimsh’.   On
+ either platform, providing of course the script is suitably located,  you
+ simply type:
+ 
+      vimtest.vimsh
+ 
+ on  the  command  line.   Note that in UNIX,  the  script  can  have  any
+ extension (or none) since it is the first line of the script that defines
+ how it is to be interpreted and executed.  This is not the case in MSDOS,
+ however, as that system uses file extensions to determine how a  file  is
+ to  be interpreted and/or executed.  As described above, you can at least
+ eliminate  the  need  to  type the extension in  MSDOS  by  defining  the
+ extension in %PATHEXT.
+
+
+
+Script file content
+ 
+ The  content of the script file can be any Vim script code.  There are  a
+ couple of caveats, however, and these deal with shell escape commands  in
+ Vim.   These  can be a part of the script, but they cannot  be  embedded.
+ That  is,  escapes to the shell to execute commands must  be  standalone,
+ they  cannot  be  part of a Vim script construct such  as  a  loop  or  a
+ function, etc.  This is because the interpreter executes them separately,
+ so  any  embedding  would disrupt code flow causing  vimsh  to  ‘freeze’.
+ Also, their output is not captured by the interpreter, but rather left as
+ placed by execution in the shell.  This being the case, their output  may
+ not always occur ‘as formatted’ by your code.
+ 
+
+ 
+ At  present, arguments cannot be passed to .vimsh files.  This may change
+ in the near future.
+
+
+
+

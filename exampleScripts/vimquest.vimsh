@@ -1,0 +1,16 @@
+#!/usr/local/bin/vimsh
+let ans=0
+while ans != 1 && ans != 2
+	echo "1: Apples"
+	echo "2: Oranges"
+	echo " "
+	echo "Which do you want? "
+	let ans=nr2char(getchar())
+	echon ans
+	echo " "
+endwhile
+if ans == 1
+	echo "An apple a day keeps the doctor away"
+else
+	echo "Oranges have lots of vitamin C"
+endif

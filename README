@@ -1,0 +1,10 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1069
+
+vimsh and vimsh.bat are simple Vim script shell command line interpreters
+for  UNIX and MSDOS respectively.  You type Vim script code into a .vimsh
+file  then, using the appropriate interpreter, execute the file from  the
+command line.   The interpreter takes this code and encapsulates it  into
+a  Vim  script function and calls the function, capturing any output  and
+echo-ing it to the shell command line.
+
+Examples and doc files included in package

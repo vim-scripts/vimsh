@@ -1,0 +1,10 @@
+#!/usr/local/bin/vimsh
+:!echo 'Vim says hello'
+:!echo 'Counting to ten...'
+let nr=1
+echo ' '
+while nr <= 10
+echon nr.' '
+let nr=nr+1
+endwhile
+echo ' '
