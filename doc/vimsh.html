@@ -287,7 +287,7 @@ style='color:#333399'>script</span> <span style='color:#333399'>function</span><
 and calls the function, capturing any output and echo-ing it to the shell
 command line.</p>
 
-<p class=DispTxt><span style='color:black'>&nbsp;</span></p>
+<p class=DispTxt>&nbsp;</p>
 
 <p class=Divider>&nbsp;</p>
 
@@ -338,9 +338,9 @@ displays the results.  This is exactly
 what happens with <b><span style='color:maroon'>vimsh</span></b><span
 style='color:black'>.</span></p>
 
-<p class=DispTxt><span style='color:black'>Here, the output would be:</span></p>
+<p class=DispTxt>Here, the output would be:</p>
 
-<p class=DispTxt><span style='color:black'>&nbsp;</span></p>
+<p class=DispTxt>&nbsp;</p>
 
 <p class=codeOutputExample>Counting to 10…</p>
 
@@ -518,7 +518,118 @@ always occur ‘as formatted’ by your code.</p>
 
 <p class=DispTxt>&nbsp;</p>
 
-<p class=DispTxt>At present, arguments cannot be passed to .vimsh files.  This may change in the near future.</p>
+<p class=heading>Using Arguments</p>
+
+<p class=DispTxt>&nbsp;</p>
+
+<p class=DispTxt>Arguments can be passed to the script on the command line in
+the usual fashion with pretty much the same caveats as other executable
+scripts. For example, in <b><span style='color:#333399'>MSDOS</span></b>, when
+quoting is needed, it is double quotes. 
+An easy example is from the <b><span style='color:purple'>counting.vimsh</span></b>
+script.  Without arguments, it issues a
+terse usage message.</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeExample>counting.vimsh</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeOutputExample>Usage: counting.vimsh fromNr toNr</p>
+
+<p class=codeOutputExample>  Counts from
+'fromNr' to 'toNr'</p>
+
+<p class=codeOutputExample style='margin-left:0in'>&nbsp;</p>
+
+<p class=DispTxt>With arguments supplied.</p>
+
+<p class=DispTxt>&nbsp;</p>
+
+<p class=codeExample>counting.vimsh 12 3</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeOutputExample>Counting from 12 to 3</p>
+
+<p class=codeOutputExample>12 11 10 9 8 7 6 5 4 3</p>
+
+<p class=codeOutputExample>Done</p>
+
+<p class=codeOutputExample>&nbsp;</p>
+
+<p class=DispTxt>Arguments are supplied to the script via a mechanism similar
+to the variable argument mechanism in <b><span style='color:#333399'>Vim script</span></b>
+functions.  In functions these arguments
+are specified as <b><span style='color:green'>a:1</span></b>, <b><span
+style='color:green'>a:2</span></b>, …, <b><span style='color:green'>a:n</span></b>
+with <b><span style='color:green'>a:0</span></b> holding the argument
+count.  <b><span style='color:maroon'>vimsh</span></b>
+passes the arguments identically, except they are globals, i.e., <b><span
+style='color:red'>g:1</span></b>, <b><span style='color:red'>g:2</span></b>, …,
+<b><span style='color:red'>g:n</span></b> with <b><span style='color:red'>g:0</span></b>
+holding the argument count.</p>
+
+<p class=DispTxt>Also, for special cases, notably when <b><span
+style='color:#333399'>Vim</span></b> commands/functions (usually user defined)
+are executed silently, within <b><span style='color:#333399'>Vim</span></b>
+messages are suppressed from appearing on the command line.  However, they are not eliminated and are
+gathered up by general redirection. 
+Frequently you do not want this output, so <b><span style='color:maroon'>vimsh</span></b>
+has a global return value you can set, <b><span style='color:red'>g:Ret</span></b>.  If this variable exists when <b><span
+style='color:maroon'>vimsh</span></b> is run, the script’s returned output is
+displayed instead of the normal redirection <b><span style='color:maroon'>vimsh</span></b>
+uses.  See the script <b><span
+style='color:purple'>vimgrep.vimsh</span></b> for an example.</p>
+
+<p class=DispTxt>The output from the last <b><span style='color:maroon'>vimsh</span></b>
+script executed is placed in the file <span style='color:green'>~/.vimsh.out</span>.  This is handy as in some cases, due to
+terminal interfaces with <b><span style='color:#333399'>Vim</span></b>, the
+displayed output may contain control characters, and command line redirection
+is not always optimal.  The contents of
+this file are ‘raw’ in that they have no special terminal escape
+sequences.  To see this, try executing
+the script <b><span style='color:purple'>vimgrep.vimsh</span></b> with command
+line redirection and compare the contents of the redirected file with the
+contents of <span style='color:green'>~/.vimsh.out</span>.  I ran this in a <b><span style='color:#333399'>cygwin</span></b>
+<b><span style='color:#333399'>DOS command prompt window</span></b> running a <b><span
+style='color:#333399'>bash</span></b> <b><span style='color:#333399'>login
+shell</span></b>.</p>
+
+<p class=DispTxt>&nbsp;</p>
+
+<p class=codeExample>vimgrep.vimsh ‘indent $VIMRUNTIME/indent/*.vim –t’
+&gt;vimgrep.out</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=codeOutputExample>-rw-r--r--   
+1 Dave     None        52827 Aug 27 12:06 .vimsh.out</p>
+
+<p class=codeOutputExample>-rw-r--r--   
+1 Dave     None        55481 Aug 27 12:06 vimgrep.out</p>
+
+<p class=codeOutputExample>&nbsp;</p>
+
+<p class=DispTxt>Control character escape sequences and garbage replaced the
+first (empty) line of the file and 2 lines of control character escape
+sequences were added to the end.</p>
+
+<p class=DispTxt>&nbsp;</p>
+
+<p class=Divider>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=codeExample>&nbsp;</p>
+
+<p class=DispTxt>The package contains example scripts that illustrate shell
+escapes, requesting input, and processing arguments.</p>
 
 <p class=MsoHeader>&nbsp;</p>
 

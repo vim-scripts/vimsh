@@ -1,0 +1,22 @@
+#!/usr/local/bin/vimsh
+if g:0 < 2
+	echo "Usage: ".expand("%:t")." fromNr toNr"
+	echo "  Counts from 'fromNr' to 'toNr'"
+	return
+endif
+let From=g:1+0
+let To=g:2+0
+echo 'Counting from '.From.' to '.To
+echo ''
+if From > To
+	while From >= To
+		echon From.' '
+		let From=From-1
+	endwhile
+else
+	while From <= To
+		echon From.' '
+		let From=From+1
+	endwhile
+endif
+echo 'Done'

@@ -1,8 +1,0 @@
-#!/usr/local/bin/vimsh
-let EX=10
-echo ''
-while EX
-	echon EX.' '
-	let EX=EX-1
-endwhile
-echo 'Done'

@@ -1,5 +1,5 @@
-vimsh version 1.0
-Page 1 of 3
+vimsh version 1.1
+Page 1 of 4
 
 
 
@@ -135,8 +135,66 @@ Script file content
  
 
  
- At  present, arguments cannot be passed to .vimsh files.  This may change
- in the near future.
+Using Arguments
+ 
+ Arguments  can be passed to the script on the command line in  the  usual
+ fashion  with  pretty much the same caveats as other executable  scripts.
+ For  example, in MSDOS, when quoting is needed, it is double quotes.   An
+ easy  example  is from the counting.vimsh script.  Without arguments,  it
+ issues a terse usage message.
+      
+      counting.vimsh
+      
+      Usage: counting.vimsh fromNr toNr
+        Counts from 'fromNr' to 'toNr'
+
+ With arguments supplied.
+ 
+      counting.vimsh 12 3
+      
+      Counting from 12 to 3
+      12 11 10 9 8 7 6 5 4 3
+      Done
+      
+ Arguments  are  supplied  to the script via a mechanism  similar  to  the
+ variable argument mechanism in Vim script functions.  In functions  these
+ arguments are specified as a:1, a:2, …, a:n with a:0 holding the argument
+ count.   vimsh passes the arguments identically, except they are globals,
+ i.e., g:1, g:2, …, g:n with g:0 holding the argument count.
+ Also,  for  special  cases, notably when Vim commands/functions  (usually
+ user  defined) are executed silently, within Vim messages are  suppressed
+ from appearing on the command line.  However, they are not eliminated and
+ are  gathered up by general redirection.  Frequently you do not want this
+ output,  so vimsh has a global return value you can set, g:Ret.  If  this
+ variable  exists  when  vimsh  is run, the script’s  returned  output  is
+ displayed  instead of the normal redirection vimsh uses.  See the  script
+ vimgrep.vimsh for an example.
+ The  output  from the last vimsh script executed is placed  in  the  file
+ ~/.vimsh.out.  This is handy as in some cases, due to terminal interfaces
+ with  Vim,  the  displayed  output may contain  control  characters,  and
+ command  line  redirection is not always optimal.  The contents  of  this
+ file  are  ‘raw’ in that they have no special terminal escape  sequences.
+ To  see  this,  try executing the script vimgrep.vimsh with command  line
+ redirection  and  compare the contents of the redirected  file  with  the
+ contents  of  ~/.vimsh.out.  I ran this in a cygwin  DOS  command  prompt
+ window running a bash login shell.
+ 
+      vimgrep.vimsh ‘indent $VIMRUNTIME/indent/*.vim –t’ >vimgrep.out
+      
+      
+      
+      -rw-r--r--    1 Dave     None        52827 Aug 27 12:06 .vimsh.out
+      -rw-r--r--    1 Dave     None        55481 Aug 27 12:06 vimgrep.out
+      
+ Control character escape sequences and garbage replaced the first (empty)
+ line  of the file and 2 lines of control character escape sequences  were
+ added to the end.
+ 
+
+
+      
+ The  package  contains  example scripts that  illustrate  shell  escapes,
+ requesting input, and processing arguments.
 
 
 

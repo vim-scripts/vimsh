@@ -8,3 +8,5 @@ echon nr.' '
 let nr=nr+1
 endwhile
 echo ' '
+" this will appear before the Vim echo-ing
+:!echo 'All Done'

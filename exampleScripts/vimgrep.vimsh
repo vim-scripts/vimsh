@@ -1,0 +1,24 @@
+#!/usr/local/bin/vimsh
+if g:0 < 2
+	echo "Usage: ".expand("%:t")." pattern files or path ..."
+	echo "Where: pattern  pattern or string to search for in files"
+	echo "       files    files to search"
+	echo "       path     path to search (must include file pattern)"
+	echo "       ...      optional Vimgrep parameters"
+	return 1
+endif
+if !exists("*Vimgrep")
+	echo "You need to install vimgrep.vim to access the Vimgrep function"
+	return 2
+endif
+let VGargs="'".g:1."','".g:2."'"
+let nrOpts=(g:0)-2
+let thisOptNr=1
+while thisOptNr <= nrOpts
+	let VGargs=VGargs.",'".g:{thisOptNr+2}."'"
+	let thisOptNr=thisOptNr+1
+endwhile
+let VGcall="let Ret=Vimgrep(".VGargs.")"
+silent execute VGcall
+let g:Ret=Ret
+return 0

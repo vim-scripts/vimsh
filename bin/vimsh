@@ -1,15 +1,27 @@
 #!sh
+# Vim script command line interpreter for MSDOS
+# Language:    vim script
+# Maintainer:  Dave Silvia <dsilvia@mchsi.com>
+# Date:        8/27/2004
+#
+# Version 1.1
+#   Added:
+#     -  Command line arguments
+#
 #
 # To use, place vimsh in a directory in your path, e.g.:
 #     /usr/local/bin/vimsh
 # NOTE: it is not necessary to have the .vimsh extension for execution
 #       only for easy identification purposes (like .sh)
 #
+SCRIPT=$1 ; export SCRIPT
+shift
+SCRIPTARGV=$@ ; export SCRIPTARGV
 # start in 'ex' mode, 'readonly', 'noswapfile'
-vim -eRn -c "silent /^function Interpret/,/^endfunction/yank z | silent @z | bd | call Interpret() | :q" $0 $1
+vim -eRn -c "silent /^function SetUp/,/^endfunction/yank z | silent @z | call SetUp() | :q" $0
 exit 0
 
-The following function parses a '.vimsh' script file of the form:
+The following functions parse a '.vimsh' script file of the form:
 
   #!/usr/local/bin/vimsh
 	<Vim script code>
@@ -25,8 +37,18 @@ NOTE: ':!' shell escape commands can be used providing they are not imbedded
       in Vim script constructs such as loops, functions, etc.  This breaks
 			the code flow and causes vimsh to hang.
 
+NOTE: DO NOT PLACE ANY CODE/COMMENTS/ETC. AFTER HERE!
+function SetUp()
+	silent /^function Interpret/,$yank z
+	silent @z
+	bw
+	execute 'silent DoArgs '.$SCRIPTARGV
+	execute 'silent ex '.$SCRIPT
+	set noswapfile nomore readonly
+	call Interpret()
+endfunction
+
 function Interpret()
-	set nomore
 	let @a=''
 	silent 2,$yank z
 	let colonBangPos=match(@z,':!')
@@ -52,7 +74,7 @@ function Interpret()
 			let @e=@z
 			let @z=''
 		endif
-		@e
+		silent @e
 		let colonBangPos=match(@z,':!')
 	endwhile
 	if @z != ''
@@ -62,15 +84,24 @@ function Interpret()
 		call ATz()
 		redir END
 	endif
-	execute 'silent :!echo "UNIX style vimsh interperter"'
-	let @b=''
-	let newlinePos=match(@a,"\<NL>")
-	while newlinePos != -1
-		let echoline=strpart(@a,0,newlinePos)
-		let @a=strpart(@a,newlinePos+1)
-		let newlinePos=match(@a,"\<NL>")
-		let @b=@b.'echo "'.echoline.'"&&'
+	bw!
+	if exists("g:Ret")
+		let @a=g:Ret
+	endif
+	call delete(glob("~/.vimsh.out"))
+	silent ex +set\ noswapfile ~/.vimsh.out
+	silent put a
+	silent :w!
+	silent bw!
+	execute 'silent :!cat '.glob("~/.vimsh.out")
+endfunction
+
+command -nargs=* DoArgs call DoArgs(<f-args>)
+function DoArgs(...)
+	let g:0=a:0
+	let thisArgNo=1
+	while thisArgNo <= a:0
+		let g:{thisArgNo}=a:{thisArgNo}
+		let thisArgNo=thisArgNo+1
 	endwhile
-	let @b='silent :!'.@b.'echo "'.@a.'"'
-	execute @b
 endfunction
